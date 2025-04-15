@@ -1,96 +1,94 @@
 @extends('temp')
 @section('content')
 
-<div class="container-fluid">
+<div class="container-fluid py-5 px-4">
     @can('admin')
-    <h2 class="main-title mb-4">Selamat Datang {{ auth()->user()->name }} di Beranda Admin</h2>
+    <h2 class="main-title text-center mb-5 animate__animated animate__fadeInDown">
+        👋 Selamat Datang, <span class="highlight">{{ auth()->user()->name }}</span> di Beranda Admin
+    </h2>
+    @endcan
+    <div class="container-fluid py-5 px-4">
+    @can('kasir')
+    <h2 class="main-title text-center mb-5 animate__animated animate__fadeInDown">
+        👋 Selamat Datang, <span class="highlight">{{ auth()->user()->name }}</span> di Beranda Kasir
+    </h2>
     @endcan
 
+
     <div class="row g-4">
-        <!-- Card Produk -->
-        <div class="col-xl-3 col-lg-3 col-md-6 mb-4">
-            <div class="card shadow-lg border-0 rounded-4 p-3 card-hover h-100">
-                <div class="card-body d-flex flex-column justify-content-between" style="min-height: 140px;">
-                    <div>
-                        <div class="text-md fw-bold text-primary text-uppercase mb-2">Produk</div>
-                        <div class="h4 fw-bold text-dark">{{ \App\Produk::count() }}</div>
-                    </div>
-                    <div class="text-end">
-                        <i class="fas fa-box fa-2x text-primary"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @php
+            $cards = [
+                ['label' => 'Produk', 'count' => \App\Produk::count(), 'icon' => 'fa-box', 'color' => '#6C5CE7'],
+                ['label' => 'Pelanggan', 'count' => \App\Pelanggan::count(), 'icon' => 'fa-users', 'color' => '#00CEC9'],
+                ['label' => 'Penjualan', 'count' => \App\Penjualan::count(), 'icon' => 'fa-shopping-cart', 'color' => '#FAB1A0'],
+                ['label' => 'Total Penjualan', 'count' => 'Rp ' . number_format(\App\Penjualan::sum('total_bayar'), 0, ',', '.'), 'icon' => 'fa-money-bill-wave', 'color' => '#FF7675'],
+            ];
+        @endphp
 
-        <!-- Card Pelanggan -->
-        <div class="col-xl-3 col-lg-3 col-md-6 mb-4">
-            <div class="card shadow-lg border-0 rounded-4 p-3 card-hover h-100">
-                <div class="card-body d-flex flex-column justify-content-between" style="min-height: 140px;">
+        @foreach($cards as $card)
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="glass-card animate__animated animate__fadeInUp">
+                <div class="d-flex flex-column justify-content-between h-100">
                     <div>
-                        <div class="text-md fw-bold text-success text-uppercase mb-2">Pelanggan</div>
-                        <div class="h4 fw-bold text-dark">{{ \App\Pelanggan::count() }}</div>
+                        <p class="fw-semibold mb-1 text-uppercase" style="color: {{ $card['color'] }}">{{ $card['label'] }}</p>
+                        <h3 class="fw-bold text-dark">{{ $card['count'] }}</h3>
                     </div>
-                    <div class="text-end">
-                        <i class="fas fa-users fa-2x text-success"></i>
+                    <div class="icon-bubble" style="background: {{ $card['color'] }}">
+                        <i class="fas {{ $card['icon'] }} fa-lg text-white"></i>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Card Penjualan -->
-        <div class="col-xl-3 col-lg-3 col-md-6 mb-4">
-            <div class="card shadow-lg border-0 rounded-4 p-3 card-hover h-100">
-                <div class="card-body d-flex flex-column justify-content-between" style="min-height: 140px;">
-                    <div>
-                        <div class="text-md fw-bold text-warning text-uppercase mb-2">Penjualan</div>
-                        <div class="h4 fw-bold text-dark">{{ \App\Penjualan::count() }}</div>
-                    </div>
-                    <div class="text-end">
-                        <i class="fas fa-shopping-cart fa-2x text-warning"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Card Total Hasil Penjualan -->
-        <div class="col-xl-3 col-lg-3 col-md-6 mb-4">
-            <div class="card shadow-lg border-0 rounded-4 p-3 card-hover h-100">
-                <div class="card-body d-flex flex-column justify-content-between" style="min-height: 140px;">
-                    <div>
-                        <div class="text-md fw-bold text-danger text-uppercase mb-2">Total Hasil Penjualan</div>
-                        <div class="h5 fw-bold text-dark">Rp {{ number_format(\App\Penjualan::sum('total_bayar'), 0, ',', '.') }}</div>
-                    </div>
-                    <div class="text-end">
-                        <i class="fas fa-money-bill-wave fa-2x text-danger"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @endforeach
     </div>
 </div>
 
+<!-- STYLE -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 <style>
-    .card-hover {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    body {
+        background: linear-gradient(to right, #f8f9fa, #e0eafc);
     }
 
-    .card-hover:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    .glass-card {
+        backdrop-filter: blur(14px);
+        background: rgba(255, 255, 255, 0.75);
+        border-radius: 1.5rem;
+        padding: 1.75rem;
+        min-height: 170px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s ease;
     }
 
-    .card {
-        border-radius: 1rem;
+    .glass-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .icon-bubble {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        align-self: flex-end;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .main-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2d3436;
+    }
+
+    .highlight {
+        color: #6C5CE7;
+        font-weight: bold;
     }
 
     .text-dark {
-        color: #343a40 !important;
-    }
-
-    h2.main-title {
-        font-size: 1.8rem;
-        font-weight: 600;
-        color: #4a4a4a;
+        color: #2f3542 !important;
     }
 </style>
 @endsection
